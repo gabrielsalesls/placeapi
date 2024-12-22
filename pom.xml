@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.github.gabrielsalesls</groupId>
-	<artifactId>placeAPI</artifactId>
+	<artifactId>placeapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>placeAPI</name>
-	<description>Demo project for Spring Boot</description>
+	<name>placeapi</name>
+	<description>A simple project to study integration testing.</description>
 	<url/>
 	<licenses>
 		<license/>
