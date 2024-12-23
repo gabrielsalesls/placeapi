@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController()
 @RequestMapping(path = "api/v1/places")
 public class PlaceController {
@@ -32,9 +34,45 @@ public class PlaceController {
             @PathVariable("id") final Long id,
             @RequestBody @Valid final PlaceRequest request) {
 
-        Place placeToEdit = placeService.getById(id);
+        Place placeToEdit = placeService.findById(id).orElseThrow(() -> new IllegalArgumentException("Id Invalido"));
         placeToEdit.edit(request.toModel());
 
         return new ResponseEntity<>(new PlaceResponse(placeService.save(placeToEdit)), HttpStatus.OK);
     }
+
+    @GetMapping("/")
+    public ResponseEntity<List<PlaceResponse>> findByName(
+            @RequestParam(value = "name") String name) {
+
+        List<PlaceResponse> places = placeService
+                .findByName(name)
+                .stream()
+                .map(PlaceResponse::new)
+                .toList();
+
+        return new ResponseEntity<>(places, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PlaceResponse>> findAll() {
+
+        List<PlaceResponse> places = placeService
+                .findAll()
+                .stream()
+                .map(PlaceResponse::new)
+                .toList();
+
+        return new ResponseEntity<>(places, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PlaceResponse> findById(
+            @PathVariable("id") final Long id
+    ) {
+
+        Place place = placeService.findById(id).orElseThrow(() -> new IllegalArgumentException("Id não encontrado"));
+        return new ResponseEntity<>(new PlaceResponse(place), HttpStatus.OK);
+
+    }
+
 }
