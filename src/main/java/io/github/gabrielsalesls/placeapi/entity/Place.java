@@ -17,26 +17,37 @@ public class Place {
     private long Id;
 
     @NotBlank(message = "Name cannot be null")
-    private final String name;
+    private String name;
 
     @NotBlank(message = "Slug cannot be null")
-    private final String slug;
+    private String slug;
 
     @NotBlank(message = "State cannot be null")
     @Size(min = 2, max = 2, message = "State must have exactly 2 characters")
-    private final String state;
+    private String state;
 
     @NotBlank(message = "City cannot be null")
-    private final String city;
+    private String city;
 
-    private final LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     private LocalDateTime updatedAt;
+
+    public Place() {}
 
     public Place(@NotBlank String name, @NotBlank String state, @NotBlank String city, @NotBlank String slug) {
         this.name = name;
         this.state = state;
         this.city = city;
         this.slug = slug;
+    }
+
+    public void edit(Place newInfo) {
+        this.name = newInfo.name;
+        this.state = newInfo.state;
+        this.city = newInfo.city;
+        this.slug = newInfo.slug;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public long getId() {

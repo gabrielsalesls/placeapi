@@ -1,5 +1,6 @@
 package io.github.gabrielsalesls.placeapi.service;
 
+import io.github.gabrielsalesls.placeapi.dto.PlaceRequest;
 import io.github.gabrielsalesls.placeapi.entity.Place;
 import io.github.gabrielsalesls.placeapi.repository.PlaceRepository;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,10 @@ public class PlaceService {
 
     public Place save(@NotNull Place place) {
         return repository.save(place);
+    }
+
+    public Place getById(@NotNull Long id) {
+        return repository.getReferenceById(id);
     }
 
 }
