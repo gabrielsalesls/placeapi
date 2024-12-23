@@ -7,17 +7,17 @@ import jakarta.validation.constraints.Size;
 public class PlaceRequest {
 
     @NotBlank(message = "Name cannot be null")
-    private String name;
+    private final String name;
 
     @NotBlank(message = "State cannot be null")
-    private String slug;
+    private final String slug;
 
     @NotBlank(message = "City cannot be null")
-    private String city;
+    private final String city;
 
     @NotBlank(message = "State cannot be null")
     @Size(min = 2, max = 2, message = "State must have exactly 2 characters")
-    private String state;
+    private final String state;
 
     public PlaceRequest(String name, String slug, String city, String state) {
         this.name = name;

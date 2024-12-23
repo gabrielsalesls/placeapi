@@ -17,19 +17,19 @@ public class Place {
     private long Id;
 
     @NotBlank(message = "Name cannot be null")
-    private String name;
+    private final String name;
 
     @NotBlank(message = "Slug cannot be null")
-    private String slug;
+    private final String slug;
 
     @NotBlank(message = "State cannot be null")
     @Size(min = 2, max = 2, message = "State must have exactly 2 characters")
-    private String state;
+    private final String state;
 
     @NotBlank(message = "City cannot be null")
-    private String city;
+    private final String city;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private final LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
 
     public Place(@NotBlank String name, @NotBlank String state, @NotBlank String city, @NotBlank String slug) {
