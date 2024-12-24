@@ -1,4 +1,4 @@
-package io.github.gabrielsalesls.placeapi.service;
+package io.github.gabrielsalesls.placeapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

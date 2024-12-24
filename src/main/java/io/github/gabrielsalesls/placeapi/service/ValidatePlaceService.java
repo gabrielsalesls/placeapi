@@ -1,5 +1,6 @@
 package io.github.gabrielsalesls.placeapi.service;
 
+import io.github.gabrielsalesls.placeapi.dto.LocationResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
