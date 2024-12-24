@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: placeapi
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
