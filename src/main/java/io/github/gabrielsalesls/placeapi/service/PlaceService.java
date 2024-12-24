@@ -13,13 +13,18 @@ import java.util.Optional;
 public class PlaceService {
 
     PlaceRepository repository;
+    ValidatePlaceService validatePlaceService;
 
     @Autowired
-    public PlaceService(PlaceRepository placeRepository) {
+    public PlaceService(PlaceRepository placeRepository, ValidatePlaceService validatePlaceService) {
         this.repository = placeRepository;
+        this.validatePlaceService = validatePlaceService;
     }
 
     public Place save(@NotNull Place place) {
+
+        validatePlaceService.validateCityAndState(place.getCity(), place.getState());
+
         return repository.save(place);
     }
 
