@@ -7,7 +7,7 @@ public class LocationResponse {
     @JsonProperty("id")
     private int id;
 
-    @JsonProperty("name")
+    @JsonProperty("nome")
     private String name;
 
     @JsonProperty("estado")

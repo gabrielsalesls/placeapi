@@ -3,6 +3,7 @@ package io.github.gabrielsalesls.placeapi.service;
 import io.github.gabrielsalesls.placeapi.dto.LocationResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Service
 public class ValidatePlaceService {
 
+    @Value("${app.places.domain.cptecapi}")
+    String host;
+
     private final RestClient restClient;
 
     @Autowired
@@ -24,9 +28,8 @@ public class ValidatePlaceService {
 
     public void validateCityAndState(@NotNull String city, @NotNull String state) {
 
-        //TODO: Adicionar uma exception especifica
-        //TODO: Mover a URL para um properties
-        final String uri = String.format("https://brasilapi.com.br/api/cptec/v1/cidade/%s", city);
+        String uri = String.format(host + "/api/cptec/v1/cidade/%s", city);
+
         List<LocationResponse> localidadesResponse = restClient.get()
                 .uri(uri)
                 .accept(APPLICATION_JSON)
