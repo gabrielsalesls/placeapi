@@ -92,7 +92,7 @@ class PlaceControllerIntegrationTest {
     @Test
     void shouldSaveAValidPlace() {
 
-        String placeRequest = fileUtils.loadFileContents("wiremock/requests/valid_place_request.json");
+        String placeRequest = fileUtils.loadFileContents("wiremock/requests/valid_place_barueri_request.json");
         String response = fileUtils.loadFileContents("wiremock/responses/cptec_place_barueri_response.json");
 
         wireMockServer.stubFor(post(urlEqualTo("/api/cptec/v1/cidade/Barueri"))
