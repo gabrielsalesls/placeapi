@@ -7,6 +7,7 @@ import io.github.gabrielsalesls.placeapi.infrastructure.FileUtils;
 import io.github.gabrielsalesls.placeapi.repository.PlaceRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -108,5 +110,34 @@ class PlaceControllerIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.CREATED.value());
 
+    }
+
+    @Test
+    void shoudReturnOkWhenPlaceIsFoundById() {
+
+        Place place = new Place("Parquinho", "SP", "Osasco", "parquinho");
+
+        Long idSaved = placeRepository.save(place).getId();
+
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(String.format("/api/v1/places/%s", idSaved))
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body("name", Matchers.equalTo("Parquinho"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenFindByIdIsNotFound() {
+
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/v1/places/1")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body(containsString("Id não encontrado"));
     }
 }
