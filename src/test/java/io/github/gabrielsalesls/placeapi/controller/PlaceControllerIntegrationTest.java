@@ -2,6 +2,7 @@ package io.github.gabrielsalesls.placeapi.controller;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import io.github.gabrielsalesls.placeapi.dto.PlaceRequest;
 import io.github.gabrielsalesls.placeapi.entity.Place;
 import io.github.gabrielsalesls.placeapi.infrastructure.FileUtils;
 import io.github.gabrielsalesls.placeapi.repository.PlaceRepository;
@@ -92,9 +93,8 @@ class PlaceControllerIntegrationTest {
     }
 
     @Test
-    void shouldSaveAValidPlace() {
+    void shouldSaveAValidPlaceAndReturnStatusCreated() {
 
-        String placeRequest = fileUtils.loadFileContents("wiremock/requests/valid_place_barueri_request.json");
         String response = fileUtils.loadFileContents("wiremock/responses/cptec_place_barueri_response.json");
 
         wireMockServer.stubFor(post(urlEqualTo("/api/cptec/v1/cidade/Barueri"))
@@ -102,8 +102,10 @@ class PlaceControllerIntegrationTest {
                         .withBody(response)
                         .withStatus(200)));
 
+        var placeRequest = new PlaceRequest("Parque", "parque-municipal", "Barueri", "SP");
+
         given()
-                .contentType(ContentType.JSON)
+                .contentType("application/json")
                 .body(placeRequest)
                 .when()
                 .post("/api/v1/places")
@@ -117,12 +119,13 @@ class PlaceControllerIntegrationTest {
 
         Place place = new Place("Parquinho", "SP", "Osasco", "parquinho");
 
-        Long idSaved = placeRepository.save(place).getId();
+        Long placeIdSaved = placeRepository.save(place).getId();
 
         given()
                 .contentType(ContentType.JSON)
+                .pathParams("id", placeIdSaved)
                 .when()
-                .get(String.format("/api/v1/places/%s", idSaved))
+                .get("/api/v1/places/{id}")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
@@ -134,10 +137,86 @@ class PlaceControllerIntegrationTest {
 
         given()
                 .contentType(ContentType.JSON)
+                .pathParams("id", "1")
                 .when()
-                .get("/api/v1/places/1")
+                .get("/api/v1/places/{id}")
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body(containsString("Id não encontrado"));
+    }
+
+    @Test
+    void shouldReturnOkWhenSearchByNameIsFound() {
+        Place place = new Place("Parquinho", "SP", "Osasco", "parquinho");
+
+        String placeSavedName = placeRepository.save(place).getName();
+
+        given()
+                .contentType(ContentType.JSON)
+                .queryParam("name", placeSavedName)
+                .when()
+                .get("/api/v1/places/")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body(".", hasSize(1));
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenSearchByNameIsNotFound() {
+
+        given()
+                .contentType(ContentType.JSON)
+                .queryParam("name", "randomname")
+                .when()
+                .get("/api/v1/places/")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body(".", hasSize(0));
+    }
+
+    @Test
+    void shoudReturnValidPlaceWhenEditDataIsValid() {
+
+        Place placeToEdit = new Place("Parquinho", "SP", "Osasco", "parquinho");
+        Long placeToEditId = placeRepository.save(placeToEdit).getId();
+
+        String response = fileUtils.loadFileContents("wiremock/responses/cptec_place_barueri_response.json");
+
+        wireMockServer.stubFor(post(urlEqualTo("/api/cptec/v1/cidade/Barueri"))
+                .willReturn(aResponse()
+                        .withBody(response)
+                        .withStatus(200)));
+
+        PlaceRequest placeRequest = new PlaceRequest("Parque", "Parque", "Barueri", "SP");
+
+        given()
+                .contentType(ContentType.JSON)
+                .pathParams("id", placeToEditId)
+                .body(placeRequest)
+                .when()
+                .put("/api/v1/places/{id}")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("city", Matchers.equalTo("Barueri"));
+
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenIdToEditIsNotFound() {
+
+        PlaceRequest placeRequest = new PlaceRequest("Parque", "Parque", "Barueri", "SP");
+        String randomId = "123";
+
+        given()
+                .contentType(ContentType.JSON)
+                .pathParams("id", randomId)
+                .body(placeRequest)
+                .when()
+                .put("/api/v1/places/{id}")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body(containsString("Id Invalido"));
     }
 }

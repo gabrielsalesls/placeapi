@@ -34,7 +34,8 @@ public class PlaceController {
             @PathVariable("id") final Long id,
             @RequestBody @Valid final PlaceRequest request) {
 
-        Place placeToEdit = placeService.findById(id).orElseThrow(() -> new IllegalArgumentException("Id Invalido"));
+        Place placeToEdit = placeService.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Id Invalido"));
         placeToEdit.edit(request.toModel());
 
         return new ResponseEntity<>(new PlaceResponse(placeService.save(placeToEdit)), HttpStatus.OK);
