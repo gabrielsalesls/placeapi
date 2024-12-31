@@ -4,6 +4,8 @@ import io.github.gabrielsalesls.placeapi.dto.PlaceRequest;
 import io.github.gabrielsalesls.placeapi.dto.PlaceResponse;
 import io.github.gabrielsalesls.placeapi.entity.Place;
 import io.github.gabrielsalesls.placeapi.service.PlaceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,12 +24,14 @@ public class PlaceController {
         this.placeService = placeService;
     }
 
+    @Operation(summary = "Create place")
     @PostMapping
     @Transactional
     public ResponseEntity<PlaceResponse> create(@RequestBody @Valid PlaceRequest request) {
         return new ResponseEntity<>(new PlaceResponse(placeService.save(request.toModel())), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Edit place")
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<PlaceResponse> update(
@@ -41,8 +45,10 @@ public class PlaceController {
         return new ResponseEntity<>(new PlaceResponse(placeService.save(placeToEdit)), HttpStatus.OK);
     }
 
+    @Operation(summary = "Search places by name")
     @GetMapping("/")
     public ResponseEntity<List<PlaceResponse>> findByName(
+            @Parameter(description = "name of place to be searched")
             @RequestParam(value = "name") String name) {
 
         List<PlaceResponse> places = placeService
@@ -54,6 +60,7 @@ public class PlaceController {
         return new ResponseEntity<>(places, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get all places")
     @GetMapping
     public ResponseEntity<List<PlaceResponse>> findAll() {
 
@@ -66,8 +73,10 @@ public class PlaceController {
         return new ResponseEntity<>(places, HttpStatus.OK);
     }
 
+    @Operation(summary = "Search places by ID")
     @GetMapping("/{id}")
     public ResponseEntity<PlaceResponse> findById(
+            @Parameter(description = "id of place to be searched")
             @PathVariable("id") final Long id
     ) {
 
